@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../src/css/font.css" />
+    <link rel="stylesheet" href="../src/css/style.css" />
+    <title>HIT</title>
+  </head>
+  <body>
+    <script>
+      let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (!loggedInUser) {
+        window.location.href = "index1.html"; // redirect if not logged in
+      }
+
+      if (loggedInUser.role !== "admin") {
+        document.querySelector("#categorySection")?.style &&
+          (document.querySelector("#categorySection").style.display = "none");
+        document.querySelector("#inventoryAdminControls")?.style &&
+          (document.querySelector("#inventoryAdminControls").style.display =
+            "none");
+      }
+
+      if (loggedInUser.role === "user") {
+        document
+          .querySelectorAll(".sideBar__manageRequests")
+          .forEach((btn) => (btn.style.display = "none"));
+      } else if (loggedInUser.role === "admin") {
+        document
+          .querySelectorAll(".sideBar__request")
+          .forEach((btn) => (btn.style.display = "none"));
+      }
+    </script>
+
+    <div class="app container">
+      <!--------- SideBar -------->
+      <button class="logout-btn" onclick="logout()">Logout</button>
+      <script>
+        function logout() {
+          localStorage.removeItem("currentUser");
+          window.location.href = "index1.html";
+        }
+      </script>
+
+      <!-- Sidebar for small screens -->
+      <div class="sideBar-ontoggle --hidden">
+        <img src="../assets/images/hit_logo.png" alt="HIT Logo" class="logo" />
+        <div class="sideBar__icons">
+          <div class="sideBar__dashboard sideBar__icon --selectedBtnUi">
+            <svg class="icon">
+              <use xlink:href="../assets/images/sprite.svg#homeIcon"></use>
+            </svg>
+            <p>Dashboard</p>
+          </div>
+          <div class="sideBar__inventory sideBar__icon">
+            <svg class="icon">
+              <use xlink:href="../assets/images/sprite.svg#productIcon"></use>
+            </svg>
+            <p>Inventory</p>
+          </div>
+          <div class="sideBar__setting sideBar__icon">
+            <img src="../assets/images/Categories.svg" alt="setting icon" />
+            <p>Categories</p>
+          </div>
+          <div class="sideBar__issue sideBar__icon">
+            <img src="../assets/images/add.png" alt="Add" style="width:20px;height:20px;margin-right:8px;" />
+            <p>Issue</p>
+          </div>
+          <div class="sideBar__request sideBar__icon">
+            <img src="../assets/images/request.svg" alt="request icon" />
+            <p>Request</p>
+          </div>
+          <div class="sideBar__manageRequests sideBar__icon">
+            <img src="../assets/images/manage.svg" alt="manage requests icon" />
+            <p>Manage Requests</p>
+          </div>
+        </div>
+      </div>
+      <div class="sideBar-ontoggle-backdrop --hidden"></div>
+
+      <!-- Sidebar for large screens -->
+      <div class="sideBar">
+        <img src="../assets/images/hit_logo.png" alt="HIT Logo" class="logo" />
+        <div class="sideBar__icons">
+          <div class="sideBar__dashboard sideBar__icon --selectedBtnUi">
+            <svg class="icon">
+              <use xlink:href="../assets/images/sprite.svg#homeIcon"></use>
+            </svg>
+            <p>Dashboard</p>
+          </div>
+          <div class="sideBar__inventory sideBar__icon">
+            <svg class="icon">
+              <use xlink:href="../assets/images/sprite.svg#productIcon"></use>
+            </svg>
+            <p>Inventory</p>
+          </div>
+          <div class="sideBar__setting sideBar__icon">
+            <img src="../assets/images/Categories.svg" alt="setting icon" />
+            <p>Categories</p>
+          </div>
+          <div class="sideBar__issue sideBar__icon">
+            <img src="../assets/images/add.png" alt="Add" style="width:20px;height:20px;margin-right:8px;" />
+            <p>Issue</p>
+          </div>
+        </div>
+      </div>
+
+      <!--------- Header --------->
+      <header class="header">
+        <form class="header__search__form">
+          <div class="header__search">
+            <svg class="icon">
+              <use xlink:href="../assets/images/sprite.svg#search"></use>
+            </svg>
+            <input type="text" placeholder="Search product" class="searchBarInput" />
+          </div>
+        </form>
+        <img src="../assets/images/burger.svg" alt="menu icon" class="menu-toggle" />
+      </header>
+
+      <!-- MAIN Content -->
+      <div class="main">
+        <!-- Dashboard Section -->
+        <div class="dashboardUi">
+          <div class="dashboardUi__header">
+            <h1>Overview</h1>
+          </div>
+          <div class="dashboardUi__main">
+            <div class="dashboardUi__main__items">
+              <img src="../assets/images/Quantity.svg" alt="quantity" />
+              <p class="dashboardUi__quantity">868</p>
+              <p>Quantity in Hand</p>
+            </div>
+            <div class="dashboardUi__main__items">
+              <img src="../assets/images/Sales.svg" alt="salesItem" />
+              <p class="dashboardUi__sales">$1434</p>
+              <p>Total Value in Hand</p>
+            </div>
+            <div class="dashboardUi__main__items">
+              <img src="../assets/images/Cancel.svg" alt="Cancel Item" />
+              <p class="dashboardUi__notAvailable">32</p>
+              <p>Not availabales</p>
+            </div>
+            <div class="dashboardUi__main__items">
+              <img src="../assets/images/Categoriescolor.svg" alt="category" />
+              <p class="dashboardUi__notAvailable">54</p>
+              <p>Total Categories</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Section -->
+        <div class="inventory-app --hidden">
+          <div class="product-section__header">
+            <h1>Products</h1>
+            <div class="product-section__header__buttons">
+              <div class="addProBtn">Add Product</div>
+              <div class="filterBtn">
+                <img src="../assets/images/filterIcon.svg" alt="filter Icon" />
+                <p>Filters</p>
+              </div>
+            </div>
+          </div>
+          <div class="product-section">
+            <table>
+              <tr class="table__title">
+                <td>Products</td>
+                <td>Quantity</td>
+                <td>Price</td>
+                <td>Availability</td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Category Section -->
+        <div class="categoryUi --hidden">
+          <div class="category__header">
+            <h1>Categories</h1>
+            <button class="addCategoryBtn">Add Category</button>
+          </div>
+          <div class="category__items"></div>
+        </div>
+
+        <!-- ⚡ NOTE: Issue section is NOT here anymore.
+             It will be injected by IssueView.js dynamically. -->
+      </div>
+
+      <!-- Add Product Modal -->
+      <div class="addProSection --hidden">
+        <div class="addProModal">
+          <h1 class="addProModal__title">New Product</h1>
+          <form class="addProModal__form">
+            <div class="addProModal__form__inputs">
+              <p>Product Name</p>
+              <input type="text" placeholder="Enter product name" class="productNameInput" />
+            </div>
+            <div class="addProModal__form__inputs">
+              <p>Category</p>
+              <select name="category" id="categoryInput">
+                <option value="">Select product category</option>
+                <option value="no-cat">No Category</option>
+              </select>
+            </div>
+            <div class="addProModal__form__inputs">
+              <p>Quantity</p>
+              <input type="number" placeholder="Enter product quantity" class="productQuantityInput" />
+            </div>
+            <div class="addProModal__form__inputs">
+              <p>Price</p>
+              <input type="number" placeholder="Enter buying price (optional)" class="productPriceInput" />
+            </div>
+            <div class="addProModal__form__buttons">
+              <button class="addProModalCancelBtn">Discard</button>
+              <button class="addProModalSubmitBtn">Add Product</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Edit Category Modal -->
+      <div class="EditCategorySection --hidden">
+        <div class="EditCatMod">
+          <h1 class="EditCatMod__title">Edit Product</h1>
+          <form class="EditCatMod__form">
+            <input type="text" name="editTitle" id="editTitle" placeholder="Edit Title" />
+            <input type="text" name="editDescription" id="editDescription" placeholder="Edit Description (Optional)" />
+            <div class="EditCatMod__btns">
+              <button class="cancelBtnEdit">Discard</button>
+              <button class="submitBtnEdit">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="../src/js/app.js" type="module"></script>
+  </body>
+</html>

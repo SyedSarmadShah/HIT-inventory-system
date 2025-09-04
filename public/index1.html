@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- FontAwesome Icons -->
+  <script src="https://kit.fontawesome.com/2f5af886d5.js" crossorigin="anonymous"></script>
+  <title>Login to HIT</title>
+  <link rel="stylesheet" href="../src/css/style1.css">
+</head>
+
+<body>
+  <div class="overlay">
+    <div class="container">
+      <h1>Heavy Industries Taxila</h1>
+
+      <!-- Login Form -->
+      <form id="loginForm">
+        <h2>Login</h2>
+        <div class="box">
+          <i class="fa fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="Enter your Email" required>
+        </div>
+        <div class="box">
+          <i class="fa fa-key"></i>
+          <input type="password" id="loginPassword" placeholder="Enter your Password" required>
+        </div>
+        <button type="submit" class="btn">Sign In</button>
+        <p>Don’t have an account? <a href="#" id="showRegister">Register</a></p>
+      </form>
+
+      <!-- Register Form (hidden initially) -->
+      <form id="registerForm" style="display:none;">
+        <h2>Register</h2>
+        <div class="box">
+          <i class="fa fa-envelope"></i>
+          <input type="email" id="registerEmail" placeholder="Enter your Email" required>
+        </div>
+        <div class="box">
+          <i class="fa fa-key"></i>
+          <input type="password" id="registerPassword" placeholder="Enter your Password" required>
+        </div>
+        <div class="box">
+          <i class="fa fa-user-shield"></i>
+          <select id="registerRole" required>
+            <option value="user">Normal User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <button type="submit" class="btn">Sign Up</button>
+        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+      </form>
+    </div> <!-- ✅ closes container -->
+  </div> <!-- ✅ closes overlay -->
+
+  <script src="../src/js/auth.js"></script>
+</body>
+</html>
