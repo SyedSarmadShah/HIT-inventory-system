@@ -1,11 +1,3 @@
-Perfect 👍
-Below is a **complete, ready-to-paste `README.md`** updated **exactly** for your screenshots folder and image names.
-
-👉 You can **copy–paste this directly** into your `README.md` in VS Code and commit it.
-
----
-
-```md
 # HIT-inventory-system
 
 ## Short Description
