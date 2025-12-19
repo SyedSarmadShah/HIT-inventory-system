@@ -163,17 +163,6 @@ Internship Front-End Project
 * Add form validation and better error handling
 * Implement automated testing and CI/CD
 
-````
 
----
-
-### ✅ Final step (don’t forget)
-After pasting this README:
-
-```bash
-git add README.md screenshots
-git commit -m "Add README with screenshots"
-git push origin main
-````
 
 ---
