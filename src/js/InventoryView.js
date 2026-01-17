@@ -1,4 +1,5 @@
 import Storage from "./API.js";
+import ValidationUtils from "./ValidationUtils.js";
 
 const mainApp = document.querySelector(".main");
 // Selecting the prodcut modal
@@ -76,6 +77,18 @@ class InventoryUi {
         <td></td>
     </tr>    
     `;
+
+    // Show empty state if no products
+    if (allProducts.length === 0) {
+      this.productSectionHTMl.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">
+            <p>No products found. Start by adding your first product!</p>
+          </td>
+        </tr>
+      `;
+      return;
+    }
 
     // Getting all the Data
     allProducts.forEach((product) => {
@@ -159,69 +172,64 @@ class InventoryUi {
   }
 
   addProductModalLogic() {
-    // Checking of the field are empty or not
-    
-    if (
-      !productNameInput.value ||
-      !categoryInput.value ||
-      !productQuantityInput.value
-    ) {
-      alert("Please enter all of the fields!");
-      return -1;
-    }
-    if (
-      Number(productPriceInput.value) < 0 ||
-      Number(productQuantityInput.value) < 0
-    ) {
-      alert("Quantity and Price should be at least 0");
+    // Validate inputs
+    const validation = ValidationUtils.validateProduct({
+      title: productNameInput.value.trim(),
+      quantity: productQuantityInput.value,
+      price: productPriceInput.value || 0,
+      category: categoryInput.value
+    });
+
+    if (!validation.isValid) {
+      alert(ValidationUtils.formatErrorMessage(validation.errors));
       return -1;
     }
 
-    // checking for duplication
+    // Checking for duplication
     if (this.id != 0) {
       const allProducts = Storage.getProducts();
       const otherProducts = allProducts.filter(
         (product) => product.id != this.id
       );
-      console.log(productNameInput.value);
 
-      const existed = otherProducts.find(
-        (product) =>
-          product.title.toLowerCase().trim() ==
-          productNameInput.value.toLowerCase().trim()
-      );
-      if (existed) {
-        alert("Product already Exist");
+      if (ValidationUtils.checkDuplicate(otherProducts, "title", productNameInput.value.trim())) {
+        alert("Product already exists");
         return -1;
       }
     }
 
     // Updating Local Storage
-    Storage.saveProduct({
-      id: this.id,
-      title: productNameInput.value.trim(),
-      category: categoryInput.value,
-      quantity: Number(productQuantityInput.value),
-      price: productPriceInput.value ? Number(productPriceInput.value) : 0,
-    });
+    try {
+      Storage.saveProduct({
+        id: this.id,
+        title: productNameInput.value.trim(),
+        category: categoryInput.value,
+        quantity: Number(productQuantityInput.value),
+        price: productPriceInput.value ? Number(productPriceInput.value) : 0,
+      });
 
-    this.id = 0;
-
-    searchBar.value = "";
-
-    // Updating the DOM
-    this.updateDom(Storage.getProducts());
-    // Closing the modal
-    this.closeProductModal();
+      this.id = 0;
+      searchBar.value = "";
+      this.updateDom(Storage.getProducts());
+      this.closeProductModal();
+    } catch (error) {
+      alert("Error saving product: " + error.message);
+    }
   }
 
   deleteBtnLogic(id) {
-    // Deleting the Product
-    Storage.deleteProduct(id);
-    // Update the DOM
-    searchBar.value = "";
+    // Confirm before deleting
+    if (!confirm("Are you sure you want to delete this product?")) {
+      return;
+    }
 
-    this.updateDom(Storage.getProducts());
+    try {
+      Storage.deleteProduct(id);
+      searchBar.value = "";
+      this.updateDom(Storage.getProducts());
+    } catch (error) {
+      alert("Error deleting product: " + error.message);
+    }
   }
 
   editBtnLogic(id) {

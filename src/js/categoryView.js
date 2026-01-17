@@ -1,4 +1,5 @@
 import Storage from "./API.js";
+import ValidationUtils from "./ValidationUtils.js";
 
 const mainApp = document.querySelector(".main");
 
@@ -96,49 +97,63 @@ class CategoryUi {
   }
 
   submitBtnLogic() {
-    // Checking if the input are empty or not
-    if (editTitleInput.value == "") {
-      alert("Please Enter all of the fields!");
+    // Validate input
+    const validation = ValidationUtils.validateCategory({
+      title: editTitleInput.value.trim()
+    });
+
+    if (!validation.isValid) {
+      alert(ValidationUtils.formatErrorMessage(validation.errors));
       return -1;
     }
 
-    // checking for duplication
+    // Checking for duplication
     if (this.id != 0) {
       const allCategories = Storage.getCategories();
       const otherCategories = allCategories.filter(
         (category) => category.id != this.id
       );
-      const existed = otherCategories.find(
-        (category) =>
-          category.title.toLowerCase().trim() ==
-          editTitleInput.value.toLowerCase().trim()
-      );
-      if (existed) {
-        alert("Category already Exist");
+
+      if (ValidationUtils.checkDuplicate(otherCategories, "title", editTitleInput.value.trim())) {
+        alert("Category already exists");
         return -1;
       }
     }
 
     // Saving the data to localstorage
-    Storage.saveCategorie({
-      id: this.id,
-      title: editTitleInput.value,
-      description: editDesInput.value.trim() === "" ? "N/A" : editDesInput.value.trim(),
-    });
+    try {
+      Storage.saveCategorie({
+        id: this.id,
+        title: editTitleInput.value.trim(),
+        description: editDesInput.value.trim() === "" ? "N/A" : editDesInput.value.trim(),
+      });
 
-    this.id = 0;
+      this.id = 0;
 
-    // Update the DOM
-    this.updateDOM();
+      // Update the DOM
+      this.updateDOM();
 
-    // Closing the Modal
-    this.closeCategoryModal();
+      // Closing the Modal
+      this.closeCategoryModal();
+    } catch (error) {
+      alert("Error saving category: " + error.message);
+    }
   }
 
   updateDOM() {
     // Creating html for each category
     let result = "";
     const allCategories = Storage.getCategories();
+
+    // Show empty state if no categories
+    if (allCategories.length === 0) {
+      result = `<div style="text-align: center; padding: 2rem; color: #999;">
+        <p>No categories found. Add one to get started!</p>
+      </div>`;
+      this.HTMLContainer.innerHTML = result;
+      return;
+    }
+
     allCategories.forEach((category) => {
       result += this.createHTML(category);
     });
@@ -174,9 +189,17 @@ class CategoryUi {
   }
 
   deleteCategory(id) {
-    // Deleting the category
-    Storage.deleteCategory(id);
-    this.updateDOM();
+    // Confirm before deleting
+    if (!confirm("Are you sure you want to delete this category?")) {
+      return;
+    }
+
+    try {
+      Storage.deleteCategory(id);
+      this.updateDOM();
+    } catch (error) {
+      alert("Error deleting category: " + error.message);
+    }
   }
 
   editCategory(id) {

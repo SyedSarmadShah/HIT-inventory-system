@@ -1,5 +1,6 @@
 // src/js/IssueView.js
 import Storage from "./API.js";
+import ValidationUtils from "./ValidationUtils.js";
 
 const mainApp = document.querySelector(".main");
 
@@ -69,6 +70,19 @@ class IssueUi {
     issueRows.innerHTML = ""; // clear existing
 
     const allIssues = Storage.getIssues();
+
+    // Show empty state if no issues
+    if (allIssues.length === 0) {
+      issueRows.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 2rem; color: #999;">
+            <p>No issues recorded yet. Add one to track items!</p>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
     allIssues.forEach((issue) => {
       const newRow = document.createElement("tr");
       newRow.innerHTML = `
@@ -99,8 +113,12 @@ class IssueUi {
       newRow.querySelector(".deleteIcon").addEventListener("click", (e) => {
         const id = Number(e.currentTarget.dataset.id);
         if (confirm("Are you sure you want to delete this issue?")) {
-          Storage.deleteIssue(id);
-          this.renderRows();
+          try {
+            Storage.deleteIssue(id);
+            this.renderRows();
+          } catch (error) {
+            alert("Error deleting issue: " + error.message);
+          }
         }
       });
 
@@ -139,28 +157,39 @@ class IssueUi {
       const item = document.querySelector(".issueItemInput").value.trim();
       const issueDate = document.querySelector(".issueDateInput").value;
 
-      if (!name || !item || !issueDate) {
-        alert("Please fill all fields!");
-        return;
-      }
-
-      // Save issue using Storage API
-      Storage.saveIssue({
-        id: this.editingId,
+      // Validate input
+      const validation = ValidationUtils.validateIssue({
         name: name,
         item: item,
         issueDate: issueDate
       });
 
-      this.editingId = 0;
+      if (!validation.isValid) {
+        alert(ValidationUtils.formatErrorMessage(validation.errors));
+        return;
+      }
 
-      // re-render
-      this.renderRows();
+      // Save issue using Storage API
+      try {
+        Storage.saveIssue({
+          id: this.editingId,
+          name: name,
+          item: item,
+          issueDate: issueDate
+        });
 
-      // clear + close
-      this.clearIssueForm();
-      addIssueSection.classList.add("--hidden");
-      document.body.classList.remove("disableScroll");
+        this.editingId = 0;
+
+        // re-render
+        this.renderRows();
+
+        // clear + close
+        this.clearIssueForm();
+        addIssueSection.classList.add("--hidden");
+        document.body.classList.remove("disableScroll");
+      } catch (error) {
+        alert("Error saving issue: " + error.message);
+      }
     });
   }
 
