@@ -47,11 +47,11 @@ class DashboardUi {
       .toLocaleString();
   }
 
-  // Calculate the Price
+  // Calculate the Price (total value = quantity * price for each product)
   calculatePrice() {
     const allProducts = Storage.getProducts();
     const totalPrice = allProducts.reduce(
-      (acc, product) => acc + product.price,
+      (acc, product) => acc + (product.quantity * product.price),
       0
     );
     return totalPrice.toLocaleString();

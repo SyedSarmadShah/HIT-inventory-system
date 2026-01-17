@@ -2,6 +2,7 @@ import DashboardUi from "./Dashboard.js";
 import InventoryUi from "./InventoryView.js";
 import CategoryUi from "./categoryView.js";
 import IssueUi from "./IssueView.js";
+import AuthManager from "./AuthManager.js";
 
 
 // -------------------------- Sidebar Btns -----------------------------
@@ -22,24 +23,40 @@ const sideBarBackdrop = document.querySelector(".sideBar-ontoggle-backdrop");
 const searchBar = document.querySelector(".searchBarInput");
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Check authentication first
+  if (!AuthManager.requireAuth()) {
+    return;
+  }
+
+  // Initialize app
   const app = new App();
   app.addEventListeners();
+  app.setupRoleBasedUI();
 
-const role = localStorage.getItem("role"); // "user" or "admin"
-
-// Hide/Show based on role
-if (role === "user") {
-  document.querySelectorAll(".sideBar__manageRequests").forEach(btn => btn.style.display = "none");
-} else if (role === "admin") {
-  document.querySelectorAll(".sideBar__request").forEach(btn => btn.style.display = "none");
-}
-
+  // Setup logout button
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      AuthManager.logout();
+      window.location.href = "index1.html";
+    });
+  }
 
   CategoryUi.updateCategoryOptions();
   DashboardUi.setApp(); // Updating the ui with the selected default page
 });
 
 class App {
+  setupRoleBasedUI() {
+    // Hide/Show elements based on role
+    if (AuthManager.isUser()) {
+      document.querySelectorAll(".sideBar__manageRequests").forEach(btn => btn.style.display = "none");
+      document.querySelectorAll(".sideBar__setting").forEach(btn => btn.style.display = "none");
+    } else if (AuthManager.isAdmin()) {
+      document.querySelectorAll(".sideBar__request").forEach(btn => btn.style.display = "none");
+    }
+  }
+
   addEventListeners() {
     // Adding event listener to each button when they are clicked
     dashboardBtns.forEach((btn) => {

@@ -1,13 +1,11 @@
 // src/js/IssueView.js
+import Storage from "./API.js";
+
 const mainApp = document.querySelector(".main");
 
 class IssueUi {
   constructor() {
-    this.issues = JSON.parse(localStorage.getItem("issues")) || [];
-  }
-
-  saveIssues() {
-    localStorage.setItem("issues", JSON.stringify(this.issues));
+    this.editingId = 0; // Track which issue is being edited
   }
 
   setApp() {
@@ -66,33 +64,44 @@ class IssueUi {
 
   renderRows() {
     const issueRows = document.querySelector(".issueRows");
+    if (!issueRows) return;
+    
     issueRows.innerHTML = ""; // clear existing
 
-    this.issues.forEach((issue, index) => {
+    const allIssues = Storage.getIssues();
+    allIssues.forEach((issue) => {
       const newRow = document.createElement("tr");
       newRow.innerHTML = `
         <td>${issue.name}</td>
         <td>${issue.item}</td>
-        <td>${issue.date}</td>
+        <td>${issue.issueDate}</td>
         <td class="editTableSection">
           <div class="table__icons">
-            <div class="editIcon" title="Edit">
+            <div class="editIcon" data-id="${issue.id}" title="Edit">
               <svg class="icon">
                 <use xlink:href="../assets/images/sprite.svg#editIcon"></use>
               </svg>
             </div>
-            <div class="deleteIcon" title="Delete">
+            <div class="deleteIcon" data-id="${issue.id}" title="Delete">
               <img src="../assets/images/deleteIcon.svg" alt="delete" />
             </div>
           </div>
         </td>
       `;
 
-      // delete
-      newRow.querySelector(".deleteIcon").addEventListener("click", () => {
-        this.issues.splice(index, 1);
-        this.saveIssues();
-        this.renderRows();
+      // Edit functionality
+      newRow.querySelector(".editIcon").addEventListener("click", (e) => {
+        const id = Number(e.currentTarget.dataset.id);
+        this.editIssue(id);
+      });
+
+      // Delete functionality
+      newRow.querySelector(".deleteIcon").addEventListener("click", (e) => {
+        const id = Number(e.currentTarget.dataset.id);
+        if (confirm("Are you sure you want to delete this issue?")) {
+          Storage.deleteIssue(id);
+          this.renderRows();
+        }
       });
 
       issueRows.appendChild(newRow);
@@ -107,6 +116,8 @@ class IssueUi {
 
     // open modal
     addIssueBtn.addEventListener("click", () => {
+      this.editingId = 0; // Reset editing state
+      this.clearIssueForm();
       addIssueSection.classList.remove("--hidden");
       document.body.classList.add("disableScroll");
     });
@@ -114,6 +125,8 @@ class IssueUi {
     // close modal
     addIssueCancelBtn.addEventListener("click", (e) => {
       e.preventDefault();
+      this.editingId = 0; // Reset editing state
+      this.clearIssueForm();
       addIssueSection.classList.add("--hidden");
       document.body.classList.remove("disableScroll");
     });
@@ -124,27 +137,63 @@ class IssueUi {
 
       const name = document.querySelector(".issueNameInput").value.trim();
       const item = document.querySelector(".issueItemInput").value.trim();
-      const date = document.querySelector(".issueDateInput").value;
+      const issueDate = document.querySelector(".issueDateInput").value;
 
-      if (!name || !item || !date) {
+      if (!name || !item || !issueDate) {
         alert("Please fill all fields!");
         return;
       }
 
-      // save issue
-      this.issues.push({ name, item, date });
-      this.saveIssues();
+      // Save issue using Storage API
+      Storage.saveIssue({
+        id: this.editingId,
+        name: name,
+        item: item,
+        issueDate: issueDate
+      });
+
+      this.editingId = 0;
 
       // re-render
       this.renderRows();
 
       // clear + close
-      document.querySelector(".issueNameInput").value = "";
-      document.querySelector(".issueItemInput").value = "";
-      document.querySelector(".issueDateInput").value = "";
+      this.clearIssueForm();
       addIssueSection.classList.add("--hidden");
       document.body.classList.remove("disableScroll");
     });
+  }
+
+  editIssue(id) {
+    const allIssues = Storage.getIssues();
+    const issue = allIssues.find(i => i.id === id);
+    
+    if (!issue) return;
+
+    this.editingId = id;
+
+    // Open modal and populate fields
+    const addIssueSection = document.querySelector(".addIssueSection");
+    const modalTitle = document.querySelector(".addIssueModal__title");
+    
+    modalTitle.textContent = "Edit Issue";
+    document.querySelector(".issueNameInput").value = issue.name;
+    document.querySelector(".issueItemInput").value = issue.item;
+    document.querySelector(".issueDateInput").value = issue.issueDate;
+    
+    addIssueSection.classList.remove("--hidden");
+    document.body.classList.add("disableScroll");
+  }
+
+  clearIssueForm() {
+    document.querySelector(".issueNameInput").value = "";
+    document.querySelector(".issueItemInput").value = "";
+    document.querySelector(".issueDateInput").value = "";
+    
+    const modalTitle = document.querySelector(".addIssueModal__title");
+    if (modalTitle) {
+      modalTitle.textContent = "New Issue";
+    }
   }
 }
 

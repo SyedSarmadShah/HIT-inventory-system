@@ -5,43 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../src/css/font.css" />
     <link rel="stylesheet" href="../src/css/style.css" />
-    <title>HIT</title>
+    <title>HIT Inventory System</title>
   </head>
   <body>
-    <script>
-      let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-      if (!loggedInUser) {
-        window.location.href = "index1.html"; // redirect if not logged in
-      }
-
-      if (loggedInUser.role !== "admin") {
-        document.querySelector("#categorySection")?.style &&
-          (document.querySelector("#categorySection").style.display = "none");
-        document.querySelector("#inventoryAdminControls")?.style &&
-          (document.querySelector("#inventoryAdminControls").style.display =
-            "none");
-      }
-
-      if (loggedInUser.role === "user") {
-        document
-          .querySelectorAll(".sideBar__manageRequests")
-          .forEach((btn) => (btn.style.display = "none"));
-      } else if (loggedInUser.role === "admin") {
-        document
-          .querySelectorAll(".sideBar__request")
-          .forEach((btn) => (btn.style.display = "none"));
-      }
-    </script>
-
     <div class="app container">
       <!--------- SideBar -------->
-      <button class="logout-btn" onclick="logout()">Logout</button>
-      <script>
-        function logout() {
-          localStorage.removeItem("currentUser");
-          window.location.href = "index1.html";
-        }
-      </script>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
 
       <!-- Sidebar for small screens -->
       <div class="sideBar-ontoggle --hidden">
