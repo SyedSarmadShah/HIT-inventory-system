@@ -5,53 +5,166 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- FontAwesome Icons -->
   <script src="https://kit.fontawesome.com/2f5af886d5.js" crossorigin="anonymous"></script>
-  <title>Login to HIT</title>
+  <title>HIT Inventory - Login</title>
   <link rel="stylesheet" href="../src/css/style1.css">
 </head>
 
 <body>
-  <div class="overlay">
-    <div class="container">
-      <h1>Heavy Industries Taxila</h1>
+  <div class="auth-container">
+    <!-- Background decoration -->
+    <div class="bg-decoration"></div>
+    
+    <div class="auth-wrapper">
+      <!-- Logo/Brand Section -->
+      <div class="brand-section">
+        <div class="brand-icon">
+          <i class="fas fa-building"></i>
+        </div>
+        <h1>Heavy Industries Taxila</h1>
+        <p class="brand-subtitle">Inventory Management System</p>
+      </div>
 
       <!-- Login Form -->
-      <form id="loginForm">
-        <h2>Login</h2>
-        <div class="box">
-          <i class="fa fa-envelope"></i>
-          <input type="email" id="loginEmail" placeholder="Enter your Email" required>
+      <form id="loginForm" class="auth-form active-form">
+        <div class="form-header">
+          <h2>Welcome Back</h2>
+          <p>Login to your account</p>
         </div>
-        <div class="box">
-          <i class="fa fa-key"></i>
-          <input type="password" id="loginPassword" placeholder="Enter your Password" required>
+
+        <!-- Email Input -->
+        <div class="form-group">
+          <label for="loginEmail" class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope"></i>
+            <input 
+              type="email" 
+              id="loginEmail" 
+              class="form-input"
+              placeholder="you@example.com" 
+              required
+              aria-label="Email address">
+          </div>
+          <span class="error-message" id="loginEmailError"></span>
         </div>
-        <button type="submit" class="btn">Sign In</button>
-        <p>Don’t have an account? <a href="#" id="showRegister">Register</a></p>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <label for="loginPassword" class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock"></i>
+            <input 
+              type="password" 
+              id="loginPassword" 
+              class="form-input password-input"
+              placeholder="••••••••" 
+              required
+              aria-label="Password">
+            <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <span class="error-message" id="loginPasswordError"></span>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="checkbox-group">
+          <input type="checkbox" id="rememberMe" class="checkbox-input">
+          <label for="rememberMe" class="checkbox-label">Remember me</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-login">
+          <span>Sign In</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+
+        <!-- Form Message -->
+        <div class="form-message" id="loginMessage"></div>
+
+        <!-- Switch to Register -->
+        <div class="form-footer">
+          <p>Don't have an account? <a href="#" id="showRegister" class="auth-switch-link">Create one</a></p>
+        </div>
       </form>
 
-      <!-- Register Form (hidden initially) -->
-      <form id="registerForm" style="display:none;">
-        <h2>Register</h2>
-        <div class="box">
-          <i class="fa fa-envelope"></i>
-          <input type="email" id="registerEmail" placeholder="Enter your Email" required>
+      <!-- Register Form -->
+      <form id="registerForm" class="auth-form">
+        <div class="form-header">
+          <h2>Get Started</h2>
+          <p>Create your account</p>
         </div>
-        <div class="box">
-          <i class="fa fa-key"></i>
-          <input type="password" id="registerPassword" placeholder="Enter your Password" required>
+
+        <!-- Email Input -->
+        <div class="form-group">
+          <label for="registerEmail" class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope"></i>
+            <input 
+              type="email" 
+              id="registerEmail" 
+              class="form-input"
+              placeholder="you@example.com" 
+              required
+              aria-label="Email address">
+          </div>
+          <span class="error-message" id="registerEmailError"></span>
         </div>
-        <div class="box">
-          <i class="fa fa-user-shield"></i>
-          <select id="registerRole" required>
-            <option value="user">Normal User</option>
-            <option value="admin">Admin</option>
-          </select>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <label for="registerPassword" class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock"></i>
+            <input 
+              type="password" 
+              id="registerPassword" 
+              class="form-input password-input"
+              placeholder="Minimum 6 characters" 
+              required
+              aria-label="Password">
+            <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <span class="error-message" id="registerPasswordError"></span>
         </div>
-        <button type="submit" class="btn">Sign Up</button>
-        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+
+        <!-- Role Selection -->
+        <div class="form-group">
+          <label for="registerRole" class="form-label">Account Type</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user-shield"></i>
+            <select id="registerRole" class="form-input" required aria-label="Account type">
+              <option value="">Select your role</option>
+              <option value="user">👤 User</option>
+              <option value="admin">👨‍💼 Administrator</option>
+            </select>
+          </div>
+          <span class="error-message" id="registerRoleError"></span>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="checkbox-group">
+          <input type="checkbox" id="termsAccept" class="checkbox-input" required>
+          <label for="termsAccept" class="checkbox-label">I agree to the Terms & Conditions</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-register">
+          <span>Create Account</span>
+          <i class="fas fa-check"></i>
+        </button>
+
+        <!-- Form Message -->
+        <div class="form-message" id="registerMessage"></div>
+
+        <!-- Switch to Login -->
+        <div class="form-footer">
+          <p>Already have an account? <a href="#" id="showLogin" class="auth-switch-link">Sign in</a></p>
+        </div>
       </form>
-    </div> <!-- ✅ closes container -->
-  </div> <!-- ✅ closes overlay -->
+    </div>
+  </div>
 
   <script src="../src/js/auth.js" type="module"></script>
 </body>
